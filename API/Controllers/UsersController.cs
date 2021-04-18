@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -20,17 +20,18 @@ namespace API.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult<IEnumerable<AppUser>> GetUserList()
+		public async Task<ActionResult<IEnumerable<AppUser>>> GetUserList()
 		{
-			return _dataContext.Users.ToList();
+	
+			return await _dataContext.Users.ToListAsync();
 		}
 
 
 		[HttpGet]
 		[Route("{id}")]
-		public ActionResult<AppUser> GetUser(int id)
+		public async Task<ActionResult<AppUser>> GetUser(int id)
 		{
-			return _dataContext.Users.Find(id);
+			return await _dataContext.Users.FindAsync(id);
 		}
 	}
 }
