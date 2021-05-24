@@ -16,7 +16,6 @@ namespace API
 			_config = config;
 		}
 
-
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddApplicationServices(_config);
