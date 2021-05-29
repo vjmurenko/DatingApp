@@ -6,19 +6,26 @@ import {MemberDetailComponent} from './members/member-detail/member-detail.compo
 import {MessagesComponent} from './messages/messages.component';
 import {ListsComponent} from './lists/lists.component';
 import {AuthGuard} from './_guards/auth.guard';
+import {TestErrorComponent} from './_errors/test-error/test-error.component';
+import {NotFoundComponent} from './_errors/not-found/not-found.component';
+import {ServerErrorComponent} from './_errors/server-error/server-error.component';
 
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {
-    path: '', runGuardsAndResolvers: 'always', canActivate: [AuthGuard], children: [
+    path: '', runGuardsAndResolvers: 'always', canActivate: [AuthGuard],
+    children: [
       {path: 'members', component: MemberListComponent},
       {path: 'members/:id', component: MemberDetailComponent},
       {path: 'lists', component: ListsComponent},
       {path: 'messages', component: MessagesComponent},
     ]
   },
-  {path: '**', component: HomeComponent, pathMatch: 'full'}
+  {path: "test-errors", component: TestErrorComponent},
+  {path: 'not-found', component: NotFoundComponent},
+  {path: 'server-error', component: ServerErrorComponent},
+  {path: '**', component: NotFoundComponent, pathMatch: 'full'}
 ];
 
 @NgModule({
