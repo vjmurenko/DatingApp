@@ -9,10 +9,10 @@ import {NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-edit-member',
-  templateUrl: './edit-member.component.html',
-  styleUrls: ['./edit-member.component.css']
+  templateUrl: './member-edit.component.html',
+  styleUrls: ['./member-edit.component.css']
 })
-export class EditMemberComponent implements OnInit {
+export class MemberEditComponent implements OnInit {
   user: User;
   member: Member;
   @ViewChild('editForm') editForm: NgForm;

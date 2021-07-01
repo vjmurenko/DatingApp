@@ -20,9 +20,10 @@ import {ServerErrorComponent} from './_errors/server-error/server-error.componen
 import {ErrorInterceptor} from './_interceptors/error.interceptor';
 import { MemberCardComponent } from './members/member-card/member-card.component';
 import {JwtInterceptor} from './_interceptors/jwt.interceptor';
-import { EditMemberComponent } from './members/edit-member/edit-member.component';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import {LoadingInterceptor} from './_interceptors/loading.interceptor';
 import {NgxSpinnerModule} from 'ngx-spinner';
+import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import {NgxSpinnerModule} from 'ngx-spinner';
     NotFoundComponent,
     ServerErrorComponent,
     MemberCardComponent,
-    EditMemberComponent
+    MemberEditComponent,
+    PhotoEditorComponent
   ],
   imports: [
     BrowserModule,
