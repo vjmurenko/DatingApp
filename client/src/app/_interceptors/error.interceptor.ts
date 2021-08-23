@@ -28,8 +28,11 @@ export class ErrorInterceptor implements HttpInterceptor {
               }
 
               throw errorsArray.flat();
-            } else {
-              this.toaster.error(error.statusText, error.status);
+            } else if(typeof error.error === 'object'){
+              this.toaster.error(error.statusText, error.status)
+            }
+            else {
+              this.toaster.error(error.error, error.status);
             }
             break;
           case 401:
@@ -45,9 +48,9 @@ export class ErrorInterceptor implements HttpInterceptor {
             break;
           default:
             this.toaster.error('Unexpected error');
-            console.log(error);
             break;
         }
+        console.log(error);
       }
       return throwError(error);
     }));

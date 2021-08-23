@@ -4,7 +4,7 @@ using API.DTO;
 using API.Entities;
 using API.Helpers;
 
-namespace API.Data
+namespace API.Interfaces
 {
 	public interface IUserRepository
 	{

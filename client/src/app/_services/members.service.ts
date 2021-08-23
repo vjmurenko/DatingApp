@@ -52,7 +52,7 @@ export class MembersService {
   }
 
   getMembers(userParams: UserParams): Observable<PaginatedResult<Member[]>> {
-    let params = MembersService.getFilterParams(userParams);
+    let params = MembersService.getFilterMemberParams(userParams);
     let url = environment.apiUrl + 'users';
     let response = this.membersCash.get(Object.values(userParams).join('-'));
 
@@ -87,6 +87,18 @@ export class MembersService {
   deletePhoto(photoId: number): Observable<void> {
     return this.http.delete<void>(environment.apiUrl + `users/delete-photo/${photoId}`);
   }
+
+  addUserLike(userName: string) {
+    return this.http.post(environment.apiUrl + `likes/${userName}`, {});
+  }
+
+  getUserLikes(predicate: string, pageSize: number, pageNumber: number): Observable<PaginatedResult<Partial<Member[]>>> {
+    let params = MembersService.getPageParams(pageSize, pageNumber);
+    params = params.append('predicate', predicate);
+
+    return this.getPaginatedResult<Partial<Member[]>>(environment.apiUrl + 'likes', params);
+  }
+
   private getPaginatedResult<T>(url: string, params: HttpParams) {
     let paginatedResult = new PaginatedResult<T>();
 
@@ -102,13 +114,8 @@ export class MembersService {
       }));
   }
 
-  private static getFilterParams(userParams: UserParams): HttpParams {
-    let params = new HttpParams();
-
-    if (userParams.pageNumber != null && userParams.pageSize != null) {
-      params = params.append('pageNumber', userParams.pageNumber.toString());
-      params = params.append('pageSize', userParams.pageSize.toString());
-    }
+  private static getFilterMemberParams(userParams: UserParams): HttpParams {
+    let params = MembersService.getPageParams(userParams.pageSize, userParams.pageNumber);
     params = params.append('gender', userParams.gender);
     params = params.append('maxAge', userParams.maxAge.toString());
     params = params.append('minAge', userParams.minAge.toString());
@@ -117,4 +124,13 @@ export class MembersService {
     return params;
   }
 
+  private static getPageParams(pageSize: number, pageNumber: number): HttpParams {
+    let params = new HttpParams();
+
+    if (pageNumber != null && pageSize != null) {
+      params = params.append('pageNumber', pageNumber.toString());
+      params = params.append('pageSize', pageSize.toString());
+    }
+    return params;
+  }
 }

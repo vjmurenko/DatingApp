@@ -43,7 +43,7 @@ namespace API.Controllers
 		public ActionResult<string> ServerError()
 		{
 			string str = null;
-			return str.ToString();
+			return str;
 		}
 	}
 }

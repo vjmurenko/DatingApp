@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.DTO;
 using API.Entities;
 using API.Helpers;
+using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +57,7 @@ namespace API.Data
 			var minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
 			var maxDob = DateTime.Today.AddYears(-userParams.MinAge);
 
-			var query = _context.Users.AsQueryable()
+			var query = _context.Users.OrderBy(u => u.Username).AsQueryable()
 				.Where(u => u.Username != userParams.CurrentUserName)
 				.Where(u => u.Gender == userParams.Gender)
 				.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
