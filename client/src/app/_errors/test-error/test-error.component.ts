@@ -9,7 +9,7 @@ import {User} from '../../_models/User';
 })
 export class TestErrorComponent implements OnInit {
 
-  private baseUrl: string = 'https://localhost:5001/api/Buggy';
+  private baseUrl: string = 'http://localhost:5000/api/Buggy';
   public errorsArray: string[] = [];
 
   constructor(private http: HttpClient) {
@@ -48,7 +48,7 @@ export class TestErrorComponent implements OnInit {
     const user = {
       password: '1'
     };
-    this.http.post('https://localhost:5001/api/account/register', user).subscribe(result => {
+    this.http.post('http://localhost:5000/api/account/register', user).subscribe(result => {
 
     }, errors => {
       this.errorsArray = errors;
