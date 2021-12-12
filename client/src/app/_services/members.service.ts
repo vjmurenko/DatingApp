@@ -88,7 +88,7 @@ export class MembersService {
     return this.http.delete<void>(environment.apiUrl + `users/delete-photo/${photoId}`);
   }
 
-  addUserLike(userName: string) {
+  addUserLike(userName: string): any {
     return this.http.post(environment.apiUrl + `likes/${userName}`, {});
   }
 

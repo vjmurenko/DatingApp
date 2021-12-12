@@ -10,6 +10,7 @@ using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
@@ -30,6 +31,7 @@ namespace API.Controllers
 		{
 			var sourceUser = await _likesRepository.GetUserWithLikes(User.GetUserId());
 			var likedUser = await _userRepository.GetUserByName(username);
+			string likeMessage;
 
 			if (sourceUser.Username == username)
 			{
@@ -40,27 +42,31 @@ namespace API.Controllers
 
 			if (userLike != null)
 			{
-				return BadRequest("You like this user already");
+				sourceUser.LikedUsers.Remove(userLike);
+				likeMessage = "You don't like";
 			}
-
-			userLike = new UserLike
+			else
 			{
-				LikedUserId = likedUser.Id,
-				SourceUserId = sourceUser.Id
-			};
+				userLike = new UserLike
+				{
+					LikedUserId = likedUser.Id,
+					SourceUserId = sourceUser.Id
+				};
 
-			sourceUser.LikedUsers.Add(userLike);
+				sourceUser.LikedUsers.Add(userLike);
+				likeMessage = "You have liked";
+			}
 
 			if (await _userRepository.SaveAllAsync())
 			{
-				return Ok();
+				return Ok(new JsonResult(likeMessage));
 			}
 
 			return BadRequest("Failed to like User");
 		}
 
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes([FromQuery]LikeParams likeParams)
+		public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes([FromQuery] LikeParams likeParams)
 		{
 			likeParams.UserId = User.GetUserId();
 			var users = await _likesRepository.GetUserLikes(likeParams);
