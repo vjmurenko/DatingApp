@@ -8,6 +8,7 @@ import {PaginatedResult, Pagination} from '../_models/pagination';
 import {UserParams} from '../_models/UserParams';
 import {AccountService} from './account.service';
 import {User} from '../_models/User';
+import {getPageParams, getPaginatedResult} from './paginationHelper';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,7 @@ export class MembersService {
       return of(response);
     }
 
-    return this.getPaginatedResult<Member[]>(url, params)
+    return getPaginatedResult<Member[]>(url, this.http, params)
       .pipe(map(response => {
         this.membersCash.set(Object.values(userParams).join('-'), response);
 
@@ -93,44 +94,19 @@ export class MembersService {
   }
 
   getUserLikes(predicate: string, pageSize: number, pageNumber: number): Observable<PaginatedResult<Partial<Member[]>>> {
-    let params = MembersService.getPageParams(pageSize, pageNumber);
+    let params = getPageParams(pageSize, pageNumber);
     params = params.append('predicate', predicate);
 
-    return this.getPaginatedResult<Partial<Member[]>>(environment.apiUrl + 'likes', params);
-  }
-
-  private getPaginatedResult<T>(url: string, params: HttpParams) {
-    let paginatedResult = new PaginatedResult<T>();
-
-    return this.http.get<T>(url, {observe: 'response', params})
-      .pipe(map(result => {
-        paginatedResult.result = result.body;
-
-        if (result.headers.get('Pagination') != null) {
-          paginatedResult.pagination = JSON.parse(result.headers.get('Pagination'));
-        }
-
-        return paginatedResult;
-      }));
+    return getPaginatedResult<Partial<Member[]>>(environment.apiUrl + 'likes', this.http, params);
   }
 
   private static getFilterMemberParams(userParams: UserParams): HttpParams {
-    let params = MembersService.getPageParams(userParams.pageSize, userParams.pageNumber);
+    let params = getPageParams(userParams.pageSize, userParams.pageNumber);
     params = params.append('gender', userParams.gender);
     params = params.append('maxAge', userParams.maxAge.toString());
     params = params.append('minAge', userParams.minAge.toString());
     params = params.append('orderBy', userParams.orderBy);
 
-    return params;
-  }
-
-  private static getPageParams(pageSize: number, pageNumber: number): HttpParams {
-    let params = new HttpParams();
-
-    if (pageNumber != null && pageSize != null) {
-      params = params.append('pageNumber', pageNumber.toString());
-      params = params.append('pageSize', pageSize.toString());
-    }
     return params;
   }
 }
