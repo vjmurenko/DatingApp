@@ -46,8 +46,8 @@ namespace API.Controllers
                 Content = createMessageDto.Content,
                 Recipient = recipient,
                 Sender = sender,
-                RecipientUsername = recipient.Username,
-                SenderUsername = sender.Username
+                RecipientUsername = recipient.UserName,
+                SenderUsername = sender.UserName
             };
 
             _messageRepository.AddMessage(message);
@@ -84,17 +84,17 @@ namespace API.Controllers
             var username = User.GetUserName();
             var message = await _messageRepository.GetMessage(id);
 
-            if (message.Recipient.Username != username && message.Sender.Username != username)
+            if (message.Recipient.UserName != username && message.Sender.UserName != username)
             {
                 return Unauthorized();
             }
 
-            if (username == message.Sender.Username)
+            if (username == message.Sender.UserName)
             {
                 message.SenderDeleted = true;
             }
 
-            if (username == message.Recipient.Username)
+            if (username == message.Recipient.UserName)
             {
                 message.RecipientDeleted = true;
             }

@@ -29,7 +29,7 @@ namespace API.Controllers
 			var likedUser = await _userRepository.GetUserByName(username);
 			string likeMessage;
 
-			if (sourceUser.Username == username)
+			if (sourceUser.UserName == username)
 			{
 				return BadRequest("You can't like yourself");
 			}
