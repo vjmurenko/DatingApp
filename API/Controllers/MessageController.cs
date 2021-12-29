@@ -26,39 +26,6 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<MemberDto>> CreateMessage(CreateMessageDto createMessageDto)
-        {
-            var username = User.GetUserName();
-
-            if (username == createMessageDto.RecipientUserName)
-            {
-                return BadRequest("You can't send message to yourself");
-            }
-
-            var sender = await _userRepository.GetUserByName(username);
-            var recipient = await _userRepository.GetUserByName(createMessageDto.RecipientUserName);
-
-            if (recipient == null) return NotFound();
-
-            var message = new Message()
-            {
-                Content = createMessageDto.Content,
-                Recipient = recipient,
-                Sender = sender,
-                RecipientUsername = recipient.UserName,
-                SenderUsername = sender.UserName
-            };
-
-            _messageRepository.AddMessage(message);
-
-            if (await _messageRepository.SaveAllAsync())
-            {
-                return Ok(_mapper.Map<MessageDto>(message));
-            }
-
-            return BadRequest("Failed to send message");
-        }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetMessagesForUser([FromQuery] MessageParams messageParams)

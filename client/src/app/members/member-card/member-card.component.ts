@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Member} from '../../_models/Member';
 import {MembersService} from '../../_services/members.service';
 import {ToastrService} from 'ngx-toastr';
+import {PresenceService} from '../../_services/presence.service';
 
 @Component({
   selector: 'app-member-card',
@@ -9,11 +10,13 @@ import {ToastrService} from 'ngx-toastr';
   styleUrls: ['./member-card.component.css']
 })
 export class MemberCardComponent implements OnInit {
-
+users: string[] = [];
   @Input() member: Member;
   @Output() updatePage = new EventEmitter();
 
-  constructor(private memberService: MembersService, private toastrService: ToastrService) {
+  constructor(public presense: PresenceService,
+              private memberService: MembersService,
+              private toastrService: ToastrService) {
   }
 
   ngOnInit(): void {
@@ -25,5 +28,4 @@ export class MemberCardComponent implements OnInit {
       this.updatePage.emit();
     });
   }
-
 }
