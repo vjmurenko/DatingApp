@@ -15,41 +15,28 @@ namespace API.Controllers
     [Authorize]
     public class MessagesController : BaseApiController
     {
-        private readonly IMessageRepository _messageRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
+        private readonly IUnityOfWork _unityOfWork;
 
-        public MessagesController(IMessageRepository messageRepository, IUserRepository userRepository, IMapper mapper)
+        public MessagesController(IUnityOfWork unityOfWork)
         {
-            _messageRepository = messageRepository;
-            _userRepository = userRepository;
-            _mapper = mapper;
+            _unityOfWork = unityOfWork;
         }
-
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetMessagesForUser([FromQuery] MessageParams messageParams)
         {
             messageParams.Username = User.GetUserName();
-            var messages = await _messageRepository.GetMessagesForUser(messageParams);
+            var messages = await _unityOfWork.MessageRepository.GetMessagesForUser(messageParams);
             Response.AddPaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
 
             return messages;
-        }
-
-        [HttpGet("thread/{username}")]
-        public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string username)
-        {
-            var currentUsername = User.GetUserName();
-
-            return Ok(await _messageRepository.GetMessageThread(currentUsername, username));
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMessage(int id)
         {
             var username = User.GetUserName();
-            var message = await _messageRepository.GetMessage(id);
+            var message = await _unityOfWork.MessageRepository.GetMessage(id);
 
             if (message.Recipient.UserName != username && message.Sender.UserName != username)
             {
@@ -68,10 +55,10 @@ namespace API.Controllers
 
             if (message.RecipientDeleted == true && message.SenderDeleted == true)
             {
-                _messageRepository.DeleteMessage(message);
+                _unityOfWork.MessageRepository.DeleteMessage(message);
             }
 
-            if (await _messageRepository.SaveAllAsync())
+            if (await _unityOfWork.Complete())
             {
                 return Ok();
             }

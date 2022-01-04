@@ -29,10 +29,6 @@ export class MessageService {
     return getPaginatedResult(environment.apiUrl + 'messages', this._httpClient, params);
   }
 
-  getMessageThread(username: string): Observable<Message[]> {
-    return this._httpClient.get<Message[]>(environment.apiUrl + `messages/thread/${username}`);
-  }
-
   async sendMessage(username: string, content: string): Promise<Message> {
     return this.hubConnection.invoke('SendMessage', {recipientUserName: username, content}).catch(error => console.log(error));
   }

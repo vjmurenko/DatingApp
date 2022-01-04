@@ -13,20 +13,18 @@ namespace API.Controllers
 	[Authorize]
 	public class LikesController : BaseApiController
 	{
-		private readonly IUserRepository _userRepository;
-		private readonly ILikesRepository _likesRepository;
+		private readonly IUnityOfWork _unityOfWork;
 
-		public LikesController(IUserRepository userRepository, ILikesRepository likesRepository)
+		public LikesController(IUnityOfWork unityOfWork)
 		{
-			_userRepository = userRepository;
-			_likesRepository = likesRepository;
+			_unityOfWork = unityOfWork;
 		}
 
 		[HttpPost("{username}")]
 		public async Task<ActionResult> AddUserLike(string username)
 		{
-			var sourceUser = await _likesRepository.GetUserWithLikes(User.GetUserId());
-			var likedUser = await _userRepository.GetUserByName(username);
+			var sourceUser = await _unityOfWork.LikesRepository.GetUserWithLikes(User.GetUserId());
+			var likedUser = await _unityOfWork.UserRepository.GetUserByName(username);
 			string likeMessage;
 
 			if (sourceUser.UserName == username)
@@ -34,7 +32,7 @@ namespace API.Controllers
 				return BadRequest("You can't like yourself");
 			}
 
-			var userLike = await _likesRepository.GetUserLike(sourceUser.Id, likedUser.Id);
+			var userLike = await _unityOfWork.LikesRepository.GetUserLike(sourceUser.Id, likedUser.Id);
 
 			if (userLike != null)
 			{
@@ -53,7 +51,7 @@ namespace API.Controllers
 				likeMessage = "You have liked";
 			}
 
-			if (await _userRepository.SaveAllAsync())
+			if (await _unityOfWork.Complete())
 			{
 				return Ok(new JsonResult(likeMessage));
 			}
@@ -65,7 +63,7 @@ namespace API.Controllers
 		public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes([FromQuery] LikeParams likeParams)
 		{
 			likeParams.UserId = User.GetUserId();
-			var users = await _likesRepository.GetUserLikes(likeParams);
+			var users = await _unityOfWork.LikesRepository.GetUserLikes(likeParams);
 			Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 			return Ok(users);
 		}

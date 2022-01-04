@@ -28,11 +28,6 @@ namespace API.Data
 			_context.Entry(user).State = EntityState.Modified;
 		}
 
-		public async Task<bool> SaveAllAsync()
-		{
-			return await _context.SaveChangesAsync() > 0;
-		}
-
 		public async Task<IEnumerable<AppUser>> GetUsersAsync()
 		{
 			return await _context.Users
@@ -67,7 +62,7 @@ namespace API.Data
 				"created" => query.OrderByDescending(u => u.Created),
 				_ => query.OrderByDescending(u => u.LastActive)
 			};
-			
+
 			var memberList = query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
 				.AsNoTracking();
 
@@ -81,6 +76,14 @@ namespace API.Data
 				.Where(u => u.UserName == name)
 				.ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
 				.SingleOrDefaultAsync();
+		}
+
+		public async Task<string> GetUserGender(string username)
+		{
+			return await _context.Users
+				.Where(u => u.UserName == username)
+				.Select(u => u.Gender)
+				.FirstOrDefaultAsync();
 		}
 	}
 }
