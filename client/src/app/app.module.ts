@@ -14,7 +14,6 @@ import {MemberListComponent} from './members/member-list/member-list.component';
 import {MessagesComponent} from './messages/messages.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from './_modules/shared.module';
-import {TestErrorComponent} from './_errors/test-error/test-error.component';
 import {NotFoundComponent} from './_errors/not-found/not-found.component';
 import {ServerErrorComponent} from './_errors/server-error/server-error.component';
 import {ErrorInterceptor} from './_interceptors/error.interceptor';
@@ -44,7 +43,6 @@ import { ConfirmDialogComponent } from './modals/confirm-dialog/confirm-dialog.c
     MemberDetailComponent,
     MemberListComponent,
     MessagesComponent,
-    TestErrorComponent,
     NotFoundComponent,
     ServerErrorComponent,
     MemberCardComponent,
