@@ -70,7 +70,6 @@ namespace API.Controllers
         public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
         {
             var user = await _unityOfWork.UserRepository.GetUserByName(User.GetUserName());
-
             var result = await _photoService.AddPhotoAsync(file);
 
             if (result.Error != null)

@@ -3,8 +3,6 @@
         <a class="navbar-brand" routerLink="/" routerLinkActive="active">Dating app</a>
         <ul class="navbar-nav mr-auto">
 
-            <a class="nav-link" routerLink="/test-errors" routerLinkActive="active">Test errors</a>
-
             <ng-container *ngIf="accountService.currentUser$ | async">
                 <li class="nav-item">
                     <a class="nav-link" [routerLink]="['/members']" routerLinkActive="active">Matches</a>

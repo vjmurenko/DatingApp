@@ -4,7 +4,7 @@ import {environment} from '../../environments/environment';
 import {Observable, of} from 'rxjs';
 import {Member} from '../_models/Member';
 import {map, take} from 'rxjs/operators';
-import {PaginatedResult, Pagination} from '../_models/pagination';
+import {PaginatedResult} from '../_models/pagination';
 import {UserParams} from '../_models/UserParams';
 import {AccountService} from './account.service';
 import {User} from '../_models/User';
@@ -20,9 +20,14 @@ export class MembersService {
   user: User;
 
   constructor(private http: HttpClient, private _accountSevice: AccountService) {
-    this._accountSevice.currentUser$.pipe(take(1)).subscribe(result => {
-      this.user = result;
-      this.userParams = new UserParams(this.user);
+    this._accountSevice.currentUser$.subscribe(result => {
+      if (result == null) {
+        this.membersCash.clear();
+      } else {
+        this.user = result;
+        this.userParams = new UserParams(this.user);
+      }
+
     });
   }
 
@@ -35,9 +40,7 @@ export class MembersService {
   }
 
   resetUserParams() {
-    let userParams = new UserParams(this.user);
-    return userParams;
-
+    return new UserParams(this.user);
   }
 
   getMemberByName(name: string): Observable<Member> {
@@ -53,13 +56,14 @@ export class MembersService {
   }
 
   getMembers(userParams: UserParams): Observable<PaginatedResult<Member[]>> {
-    let params = MembersService.getFilterMemberParams(userParams);
-    let url = environment.apiUrl + 'users';
     let response = this.membersCash.get(Object.values(userParams).join('-'));
 
     if (response) {
       return of(response);
     }
+
+    let params = MembersService.getFilterMemberParams(userParams);
+    let url = environment.apiUrl + 'users';
 
     return getPaginatedResult<Member[]>(url, this.http, params)
       .pipe(map(response => {
